@@ -1,0 +1,208 @@
+.bg-more-user-task{
+  background-color: var(--main-color);
+}
+
+.user-popoup-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.userBoardPopup {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+
+.userItem {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.profileSmall {
+  width: 42px;
+  height: 42px;
+}
+
+.taskPopupFooter {
+  color: var(--gray);
+}
+
+.taskPopupFooter span {
+  color: var(--main-color);
+}
+
+.taskPopup {
+  max-width: 525px !important;
+}
+
+.first-letter-uppercase {
+  display: inline-block;
+}
+
+.first-letter-uppercase::first-letter {
+  text-transform: uppercase !important;
+}
+
+#showTaskPopup,
+#addTaskPopup {
+  padding: 32px;
+}
+
+.addTaskPopup {
+  max-width: 1116px !important;
+}
+
+.drag-area {
+  min-height: 50vh;
+  margin-top: 16px;
+}
+
+.rotateCard {
+  transform: rotate(8deg);
+  transition: transform 200ms ease-in-out;
+}
+
+.drag-area-highlight {
+  border: 1px dashed #a8a8a8;
+  border-radius: 24px;
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+#headline-user-assigned {
+  color: var(--main-color);
+  font-size: 20px;
+}
+
+.subtasksPopup {
+  max-height: 120px;
+  overflow-y: auto;
+}
+
+.mobileAddTaskButton,
+.mobileAddTaskButtonSmall,
+.mobileAddTaskButton {
+  display: none;
+}
+
+.desktopAddTaskButton {
+  display: inline-block;
+}
+
+.container-header-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dragDrop-menu-mobile {
+  display: none;
+}
+
+.menu-mobile-task-container {
+  position: absolute;
+  background-color: var(--main-color);
+  color: var(--white);
+  padding: 12px;
+  width: 120px;
+  top: 0;
+  right: 0;
+  border-top-left-radius: 20px;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cancel-button-dragDrop {
+  height: 24px !important;
+  width: auto !important;
+  aspect-ratio: 1/1;
+  position: absolute !important;
+  top: 4px !important;
+  right: 4px !important;
+}
+
+.error-board-no-found{
+  font-size: 40px;
+  text-align: center;
+  color: red;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+@media (max-width: 900px) {
+  .sub-container {
+    padding-bottom: 100px;
+  }
+
+  .button.mobileAddTaskButton {
+    display: none !important;
+  }
+
+  .mobileAddTaskButton {
+    display: inline-block;
+  }
+
+  .desktopAddTaskButton {
+    display: none;
+  }
+
+  .mobileAddTaskButtonSmall {
+    display: flex;
+  }
+
+  .boardMobileHeader {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+
+  .mobileAddTaskButtonSmall {
+    height: 40px;
+    width: 40px;
+  }
+
+  .boardHeader .searchContainer,
+  #searchTask,
+  .searchBox {
+    width: 100%;
+  }
+
+  .dragDrop-menu-mobile {
+    display: inline-block;
+    background-color: var(--main-color);
+    border-radius: 100%;
+    height: 30px;
+    aspect-ratio: 1/1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+  }
+
+  .dragDrop-menu-mobile p {
+    padding: 4px 8px 4px 4px;
+    margin: 0 24px 0 0;
+  }
+
+  .dragDrop-menu-mobile:hover {
+    background-color: var(--menu-hover);
+  }
+
+  .dragDrop-menu-mobile p:hover {
+    background-color: var(--menu-hover);
+  }
+
+  .dragDrop-menu-mobile img {
+    height: 90%;
+    width: 90%;
+  }
+}

@@ -1,0 +1,425 @@
+a {
+  text-decoration: none;
+  color: #a8a8a8;
+}
+
+.bodyLogin {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  animation: 500ms ease-in-out 1000ms fadeInLogin forwards;
+  margin-top: 100px;
+}
+
+@keyframes animateJoinLogo {
+  from {
+    transform: translate(0);
+    height: 100vh;
+  }
+  to {
+    transform: translate(-40%, -40%) scale(0.35);
+  }
+}
+
+@keyframes fadeInLogin {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.logoIndex {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+  background-color: transparent;
+  animation: 500ms ease-in-out 1000ms animateJoinLogo forwards;
+}
+
+.signUpTop {
+  height: 49px;
+  padding-top: 67px;
+  padding-right: 8%;
+  gap: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  opacity: 0;
+  animation: 500ms ease-in-out 1000ms fadeInLogin forwards;
+}
+
+.signUpButton {
+  padding: 15px, 16px, 15px, 16px;
+  gap: 10px;
+  border-radius: 8px;
+  background-color: #2a3647;
+  color: white;
+  height: 49px;
+  width: 91px;
+}
+
+.signUpButton:hover {
+  background-color: #29abe2;
+  box-shadow: 0px 4px 4px 0px #00000040;
+}
+
+.HeadlinerLogin {
+  width: 315px;
+  height: 89px;
+  gap: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 61px;
+  line-height: 73.2px;
+  font-weight: 700;
+}
+
+.HeadlinerLine {
+  width: 150px;
+  height: 3px;
+  background-color: #29abe2;
+  border-radius: 12px;
+}
+
+.loginBox {
+  background-color: white;
+  box-shadow: 2px 2px 2px 2px rgba(0, 0, 0, 0.1);
+  border-radius: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 493px;
+  width: 652px;
+  gap: 32px;
+  margin-top: 70px;
+}
+
+.signupBox {
+  background-color: white;
+  box-shadow: 2px 2px 2px 2px rgba(0, 0, 0, 0.1);
+  border-radius: 30px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  flex-direction: column;
+  height: 630px;
+  width: 100%;
+  gap: 32px;
+  padding: 48px 88px;
+  box-sizing: border-box;
+  max-width: 598px;
+}
+
+.loginInputFields {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 32px;
+}
+
+.inputRedBorder {
+  border-color: red !important;
+}
+
+.emailClass {
+  width: 422px;
+  border-radius: 10px;
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  padding: 12px, 21px, 12px, 21px;
+  gap: 10px;
+  font-size: 24px;
+  outline-color: var(--primary-color);
+}
+
+.passwordClass {
+  width: 422px;
+  height: 48px;
+  border-radius: 10px;
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  padding: 12px, 21px, 12px, 21px;
+  gap: 10px;
+  font-size: 24px;
+  outline-color: var(--primary-color);
+}
+
+input::placeholder {
+  padding-left: 0px !important;
+  align-items: baseline;
+}
+
+.checkboxContainer {
+  width: 652px;
+  padding-left: 300px;
+}
+
+.loginButton {
+  width: 110px;
+  height: 48px;
+  border-radius: 8px;
+  font-weight: 700;
+  line-height: 25.2px;
+  size: 21px;
+  background-color: #2a3647;
+  color: white;
+  padding: 15px, 24px, 15px, 24px;
+  gap: 10px;
+  margin-right: 32px;
+  font-size: 21px;
+  cursor: pointer;
+}
+
+.loginButton:hover {
+  background-color: #29abe2;
+  box-shadow: 0px 4px 4px 0px #00000040;
+}
+
+.guestLogin {
+  width: 177px;
+  height: 55px;
+  border: 1px solid;
+  border-radius: 8px;
+  cursor: pointer;
+  gap: 10px;
+  color: #2a3647;
+  font-weight: 700;
+  font-size: 21px;
+  line-height: 25.2px;
+  background-color: white;
+  transition: all 200ms ease-in-out;
+}
+
+.guestLogin:hover {
+  color: #29abe2;
+  box-shadow: 0px 4px 4px 0px #00000040;
+}
+
+.footerIndex {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 24px;
+  gap: 35px;
+  height: 35px;
+  opacity: 0;
+  animation: 500ms ease-in-out 1000ms fadeInLogin forwards;
+}
+
+.smallLinks:hover {
+  color: #29abe2;
+}
+
+.password {
+  background: url("../img/lock_icon.svg") no-repeat scroll;
+  background-position: 97% center;
+}
+
+.person {
+  background: url("../img/person_white_icon.svg") no-repeat scroll;
+  background-position: 97% center;
+}
+
+.email {
+  background: url("../img/mail_icon.svg") no-repeat scroll;
+  background-position: 97% center;
+}
+
+.signUpBottom {
+  display: none;
+}
+
+.mobileLogoContainer,
+.mobileLogo {
+  display: none;
+}
+
+@media only screen and (max-width: 950px) {
+  .logoIndex {
+    display: none !important;
+  }
+
+  .mobileLogoContainer {
+    background-color: #2a3647;
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    display: block;  
+    animation: 500ms ease-in-out 1000ms fadeColorReverse forwards;
+  }
+
+  .fillPath {
+    animation: 500ms ease-in-out 1000ms fadeColor forwards;
+  }
+
+  .mobileLogo {
+    display: block;
+    position: absolute;
+    left: 42%;
+    top: 45%;
+    width: 100px;
+    height: 121px;
+    animation: 500ms ease-in-out 1000ms animateJoinLogo forwards;
+  }
+
+  @keyframes animateJoinLogo {
+    from {
+      left: 42%;
+      top: 45%;
+      width: 100px;
+      height: 121px;
+    }
+    to {
+      left: 38px;
+      top: 37px;
+      width: 64px;
+      height: 78px;
+    }
+  }
+
+  @keyframes fadeColor {
+    from {
+      fill: white;
+    }
+    to {
+      fill: #2a3647;
+    }
+  }
+
+  @keyframes fadeColorReverse {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+      display: none;
+    }
+  }
+
+  .bodyLogin,
+  .footerIndex {
+    opacity: 1;
+    animation: unset;
+  }
+
+  .logoIndex {
+    animation: unset;
+    position: unset;
+    left: 0;
+    top: 0;
+    display: unset;
+    height: unset;
+    width: unset;
+  }
+
+  .signupBox {
+    max-width: 396px;
+    padding: 32px 0px 32px 0px;
+    margin-top: 160px;
+  }
+
+  .signupBox .HeadlinerLogin {
+    font-size: 47px;
+    width: 100%;
+  }
+
+  form.loginBox {
+    width: 396px;
+    height: 515px;
+    padding: 32px 0px 32px 0px;
+    gap: 32px;
+  }
+
+  div.HeadlinerLogin {
+    width: 139px;
+    height: 72px;
+    gap: 16px;
+    font-size: 47px;
+    font-weight: 700;
+    line-height: 56.4px;
+  }
+
+  input.emailClass {
+    width: 80%;
+    gap: 8px;
+    margin-left: 20px;
+  }
+
+  input.passwordClass {
+    width: 80%;
+    gap: 8px;
+    margin-left: 20px;
+  }
+
+  .loginInputFields input::placeholder {
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 24px;
+    width: 322px;
+    height: 24px;
+  }
+
+  div.enterButtons {
+    display: flex;
+    flex-direction: column;
+    gap: 21px;
+  }
+
+  button.loginButton {
+    width: 180px;
+    height: 51px;
+    border-radius: 8px;
+    padding: 4px 0px 4px 0px;
+    gap: 10px;
+  }
+
+  button.guestLogin {
+    width: 180px;
+    height: 51px;
+    border-radius: 8px;
+    padding: 4px 0px 4px 0px;
+    gap: 10px;
+  }
+
+  div.signUpTop {
+    display: none;
+  }
+
+  div.checkboxContainer {
+    width: 100px;
+    padding-left: 0;
+    padding-right: 200px;
+  }
+
+  div.signUpBottom {
+    display: inline;
+    height: 49px;
+    padding-top: 67px;
+    padding-right: 8%;
+    gap: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .logoIndex img {
+    width: 80px;
+    height: 100px;
+    padding-left: 77px;
+  }
+}

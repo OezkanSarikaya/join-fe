@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Join - Board</title>
+    <link rel="stylesheet" href="./assets/css/style.css" />
+    <link rel="stylesheet" href="./assets/css/board.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <script defer src="./assets/js/include.js"></script>
+    <script defer src="./assets/js/data.js"></script>
+    <script defer src="./assets/js/templates.js"></script>
+    <script defer src="./assets/js/script.js"></script>
+    <script defer src="./assets/js/login.js"></script>
+    <script defer src="./assets/js/board.js"></script>
+    <script defer src="./assets/js/board2.js"></script>
+    <script defer src="./assets/js/addTask.js"></script>
+    <script defer src="./assets/js/editTask.js"></script>
+    <script defer src="./assets/js/dragndropboard.js"></script>
+    <link rel="shortcut icon" href="./assets/img/join_fill_icon.svg" type="image/x-icon" />
+  </head>
+  <body onload="includeHTML()" onresize="resizeChangeAddTaskMobile(); resizeMenuDragMobile()">
+    <div id="dialog" class="d-none animate__animated" onclick="closeTaskPop()"></div>
+    <div id="innerDialog" class="animate__animated d-none innerDialog">
+      <img onclick="closeTaskPop()" class="closeDialog" src="./assets/img/close_icon.svg" alt="" />
+      <div id="addTaskPopup" class="d-none" w3-include-html="./assets/templates/add_task_template.html"></div>
+      <div id="showTaskPopup" class="d-none" w3-include-html="./assets/templates/task_popup_template.html"></div>
+    </div>
+
+    <div class="container">
+      <div id="menu" w3-include-html="./assets/templates/menu.html"></div>
+      <div id="main">
+        <header id="header"></header>
+        <div class="sub-container">
+          <header class="boardHeader">
+            <div class="boardMobileHeader">
+            <h2>Board</h2>
+            <button class="button mobileAddTaskButtonSmall" onclick="location.href='./add_task.html?typeTask=1'">
+              <img src="./assets/img/add.svg" alt="" />
+            </button>
+          </div>
+            <div class="searchBox">
+              <div class="searchContainer">
+                <input id="searchTask" type="text" placeholder="Find Task" onkeyup="searchTasks()" />
+                <img class="cleanButtonSearch" onclick="cleanSearchInput()" src="./assets/img/cancel_light_blue.svg" alt="clean search button">
+                <img
+                  src="./assets/img/search_icon.svg"
+                  alt="" onclick="searchTasks()" />
+              </div>
+              <button class="button mobileAddTaskButton" onclick="location.href='./add_task.html?typeTask=1'">
+                Add task <img src="./assets/img/add.svg" alt="" />
+              </button>
+              <button class="button desktopAddTaskButton" onclick="openDialog('add_task_template.html')">
+                Add task <img src="./assets/img/add.svg" alt="" />
+              </button>
+            </div>
+          </header>
+          <div id="container-boardNoResult-alert" class="container-popUp error-board-no-found">
+            <!-- <div id="boardNoResult-alert" class="popUp"></div> -->
+          </div>
+          <main class="boardSections">
+            <section data-section="1">
+              <header>
+                <h3>To do</h3>
+                <svg 
+                  onclick="changeTypeOfTask(1), location.href='./add_task.html?typeTask=1'"
+                  class="svgIcon mobileAddTaskButton"
+                  width="24"
+                  height="25"
+                  viewBox="0 0 24 25"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg">
+                  <rect
+                    class="svgIconStrokeLightBlue"
+                    x="1"
+                    y="1.5"
+                    width="22"
+                    height="22"
+                    rx="7"
+                    stroke="#2A3647"
+                    stroke-width="2" />
+                  <path
+                    class="svgIconStrokeLightBlue"
+                    d="M12 8.5V16.5"
+                    stroke="#2A3647"
+                    stroke-width="2"
+                    stroke-linecap="round" />
+                  <path
+                    class="svgIconStrokeLightBlue"
+                    d="M16 12.5754L8 12.5754"
+                    stroke="#2A3647"
+                    stroke-width="2"
+                    stroke-linecap="round" />
+                </svg>
+
+
+                <svg 
+                onclick="changeTypeOfTask(1), openDialog('add_task_template.html')"
+                class="svgIcon desktopAddTaskButton"
+                width="24"
+                height="25"
+                viewBox="0 0 24 25"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg">
+                <rect
+                  class="svgIconStrokeLightBlue"
+                  x="1"
+                  y="1.5"
+                  width="22"
+                  height="22"
+                  rx="7"
+                  stroke="#2A3647"
+                  stroke-width="2" />
+                <path
+                  class="svgIconStrokeLightBlue"
+                  d="M12 8.5V16.5"
+                  stroke="#2A3647"
+                  stroke-width="2"
+                  stroke-linecap="round" />
+                <path
+                  class="svgIconStrokeLightBlue"
+                  d="M16 12.5754L8 12.5754"
+                  stroke="#2A3647"
+                  stroke-width="2"
+                  stroke-linecap="round" />
+              </svg>
+              </header>
+        
+              <div
+                class="drag-area"
+                id="toDoBoard"
+                ondrop="moveTo(1)"
+                ondragleave="removeHighlight('toDoBoard')"
+                ondragover="allowDrop(event); highlight('toDoBoard')"
+                >
+                <article id="container-todo" class="emptyTaskCard">No tasks To do</article>
+              </div>
+            </section>
+            <section data-section="2">
+              <header>
+                <h3>In progress</h3>
+                <svg
+                  onclick="changeTypeOfTask(2), location.href='./add_task.html?typeTask=2'"
+                  class="svgIcon mobileAddTaskButton"
+                  width="24"
+                  height="25"
+                  viewBox="0 0 24 25"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg">
+                  <rect
+                    class="svgIconStrokeLightBlue"
+                    x="1"
+                    y="1.5"
+                    width="22"
+                    height="22"
+                    rx="7"
+                    stroke="#2A3647"
+                    stroke-width="2" />
+                  <path
+                    class="svgIconStrokeLightBlue"
+                    d="M12 8.5V16.5"
+                    stroke="#2A3647"
+                    stroke-width="2"
+                    stroke-linecap="round" />
+                  <path
+                    class="svgIconStrokeLightBlue"
+                    d="M16 12.5754L8 12.5754"
+                    stroke="#2A3647"
+                    stroke-width="2"
+                    stroke-linecap="round" />
+                </svg>
+                <svg
+                onclick="changeTypeOfTask(2), openDialog('add_task_template.html')"
+                class="svgIcon desktopAddTaskButton"
+                width="24"
+                height="25"
+                viewBox="0 0 24 25"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg">
+                <rect
+                  class="svgIconStrokeLightBlue"
+                  x="1"
+                  y="1.5"
+                  width="22"
+                  height="22"
+                  rx="7"
+                  stroke="#2A3647"
+                  stroke-width="2" />
+                <path
+                  class="svgIconStrokeLightBlue"
+                  d="M12 8.5V16.5"
+                  stroke="#2A3647"
+                  stroke-width="2"
+                  stroke-linecap="round" />
+                <path
+                  class="svgIconStrokeLightBlue"
+                  d="M16 12.5754L8 12.5754"
+                  stroke="#2A3647"
+                  stroke-width="2"
+                  stroke-linecap="round" />
+              </svg>
+              </header>
+              <div
+                class="drag-area"
+                id="inProgress"
+                ondrop="moveTo(2)"
+                ondragleave="removeHighlight('inProgress')"
+                ondragover="allowDrop(event); highlight('inProgress')"
+                >
+              </div>
+            </section>
+            <section data-section="3">
+              <header>
+                <h3>Await feedback</h3>
+                <svg
+                  onclick="changeTypeOfTask(3), location.href='./add_task.html?typeTask=3'"
+                  class="svgIcon mobileAddTaskButton"
+                  width="24"
+                  height="25"
+                  viewBox="0 0 24 25"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg">
+                  <rect
+                    class="svgIconStrokeLightBlue"
+                    x="1"
+                    y="1.5"
+                    width="22"
+                    height="22"
+                    rx="7"
+                    stroke="#2A3647"
+                    stroke-width="2" />
+                  <path
+                    class="svgIconStrokeLightBlue"
+                    d="M12 8.5V16.5"
+                    stroke="#2A3647"
+                    stroke-width="2"
+                    stroke-linecap="round" />
+                  <path
+                    class="svgIconStrokeLightBlue"
+                    d="M16 12.5754L8 12.5754"
+                    stroke="#2A3647"
+                    stroke-width="2"
+                    stroke-linecap="round" />
+                </svg>
+                <svg
+                onclick="changeTypeOfTask(3), openDialog('add_task_template.html')"
+                class="svgIcon desktopAddTaskButton"
+                width="24"
+                height="25"
+                viewBox="0 0 24 25"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg">
+                <rect
+                  class="svgIconStrokeLightBlue"
+                  x="1"
+                  y="1.5"
+                  width="22"
+                  height="22"
+                  rx="7"
+                  stroke="#2A3647"
+                  stroke-width="2" />
+                <path
+                  class="svgIconStrokeLightBlue"
+                  d="M12 8.5V16.5"
+                  stroke="#2A3647"
+                  stroke-width="2"
+                  stroke-linecap="round" />
+                <path
+                  class="svgIconStrokeLightBlue"
+                  d="M16 12.5754L8 12.5754"
+                  stroke="#2A3647"
+                  stroke-width="2"
+                  stroke-linecap="round" />
+              </svg>
+              </header>
+              <div
+                class="drag-area"
+                id="awaitFeedback"
+                ondrop="moveTo(3)"
+                ondragleave="removeHighlight('awaitFeedback')"
+                ondragover="allowDrop(event); highlight('awaitFeedback')"
+               >
+              </div>
+            </section>
+            <section data-section="4">
+              <header>
+                <h3>Done</h3>
+              </header>
+              <div
+                class="drag-area"
+                id="done"
+                ondrop="moveTo(4)"
+                ondragleave="removeHighlight('done')"
+                ondragover="allowDrop(event); highlight('done')"
+               >
+              </div>
+            </section>
+          </main>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Join - Add Task</title>
+		<link rel="stylesheet" href="./assets/css/style.css" />
+		<script src="./assets/js/include.js"></script>
+		<script defer src="./assets/js/data.js"></script>
+		<script defer src="./assets/js/templates.js"></script>
+		<script defer src="./assets/js/script.js"></script>
+		<script defer src="./assets/js/login.js"></script>
+		<script defer src="./assets/js/addTask.js"></script>
+		<link
+			rel="shortcut icon"
+			href="./assets/img/join_fill_icon.svg"
+			type="image/x-icon"
+		/>
+	</head>
+	<body onload="includeHTML()">
+		<div class="container">
+			<div id="menu" w3-include-html="./assets/templates/menu.html"></div>
+			<div id="main">
+				<header id="header"></header>
+
+				<div class="sub-container-addTask height-100">
+					<div
+						id="add_task_template"
+						class="height-100 d-flex"
+						w3-include-html="./assets/templates/add_task_template.html"
+					>
+				</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
