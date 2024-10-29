@@ -207,6 +207,8 @@ function changePriorityEditTask(idPriorityButton) {
 function searchTasks() {
   let filterTask = document.getElementById("searchTask").value;
   filterTask = filterTask.toLowerCase();
+ 
+  
   renderHTMLBoard(filterTask);
 }
 

@@ -131,7 +131,7 @@ function renderSubtaskHTMLPopupTask() {
     headlineSubtask.textContent = "Subtasks";
     for (let i = 0; i < subTasks.length; i++) {
       const subTask = subTasks[i];
-console.log(currentTaskId, currentTask.subTasks[i].id);
+// console.log(currentTaskId, currentTask.subTasks[i].id);
 
       containerSubtask.innerHTML += /*html*/ `
         <input type="checkbox" onclick="updateSubTask('${currentTaskId}',${currentTask.subTasks[i].id},${i})" name="checkbox-subTask" id="subTask${i}" />
@@ -167,11 +167,16 @@ function filterTasks() {
 async function renderHTMLBoard(filterTask) {
   // console.log('renderHTMLBoard',tasks);
   
-  // let listTasks = Object.values(tasks);
-  let listTasks = tasks;
-  
+  let listTasks = Object.values(tasks);
   // let listTasks = tasks;
+  
   let listTaskId = Object.keys(tasks);
+
+  for (let k = 0; k < listTasks.length; k++) {
+    const task = listTasks[k];
+    task.id = listTaskId[k];
+  }
+  
   if (filterTask) {
     let filteredTasks;
     filteredTasks = listTasks.filter(
@@ -181,14 +186,8 @@ async function renderHTMLBoard(filterTask) {
     listTasks = filteredTasks;
     alertNoTaskFound(filteredTasks);
   }
-  for (let k = 0; k < listTasks.length; k++) {
-    const task = listTasks[k];
-    task.id = listTaskId[k];
-    // console.log(task.id );
-    
-    // task.id = tasks.id;
-  }
- 
+
+
   
   
   renderToDoTask(listTasks);
