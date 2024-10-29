@@ -22,10 +22,12 @@ function allowDrop(ev) {
  */
 async function moveTo(status) {   
     const TaskID = tasks[currentDragElement].id;
-    let firebaseURL= `tasks/${TaskID}`; 
+    let firebaseURL= `tasks/${TaskID}/update_status`; 
     let statusData = {
         "status": status
     };
+    // console.log(statusData, firebaseURL);
+    
     await putData(statusData, firebaseURL);
     document.getElementById("toDoBoard").classList.remove('drag-area-highlight');
     document.getElementById("inProgress").classList.remove('drag-area-highlight');
