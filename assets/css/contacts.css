@@ -62,7 +62,7 @@
 }
 
 .contact-list {
-  overflow-y: scroll;
+  overflow-y: auto;
   height: calc(100% - 227px);
   margin-top: -11px;
   /* padding: 85px 64px 0px 64px; */

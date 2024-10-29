@@ -58,7 +58,7 @@ function renderHTMLSubTask(subTaskName, i) {
 function userHTMLBoard(user) {
 	return /*html*/`
 		 <div class="userBoardPopup">
-				<span class="profileSmall" style="background-color: ${colors[user.colorIndex].color}">${getInitials(
+				<span class="profileSmall" style="background-color: ${colors[user.color].color}">${getInitials(
 				user.name)}</span>
 				<span>${user.name}</span>
 			</div> 
@@ -101,14 +101,14 @@ function templateTaskBoard(task, i, idContainerSubTask, idContainerUserTask, cou
         <p class="taskDesription">${taskDesription}</p>
         <div id="${idContainerSubTask}${i}" class="subtasks">
           ${
-            task["subTasks"]
+            subTasks.length
               ? `<div class="progressContainer">
               <div class="progress" style="width: ${porcentTaskDone}%"></div>
             </div>`
               : ""
           }
           <div>
-            <span>${subTasks ? countSubTasksDone + "/" + subTasks.length + " Subtasks" : ""}</span>
+            <span>${subTasks.length ? countSubTasksDone + "/" + subTasks.length + " Subtasks" : ""}</span>
           </div>
         </div>
         <footer>

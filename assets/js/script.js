@@ -182,6 +182,8 @@ async function loadData(path = "") {
   }
   if (path == "tasks") {
     !responseToJson ? (tasks = []) : (tasks = responseToJson);
+    // console.log(tasks);
+    
   }
 }
 
@@ -237,7 +239,7 @@ function logout() {
 async function postData(data = {}, path = "") {
   let response = await fetch(BASE_URL + path +"/", {
     method: "POST",
-    headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+    headers: { "Content-Type": "application/json"},
     body: JSON.stringify(data),
   });
   return (responseToJson = await response.json());
@@ -251,7 +253,7 @@ async function postData(data = {}, path = "") {
  */
 async function putData(data, path = "") {
   let response = await fetch(BASE_URL + path +"/", {
-    method: "PUT",
+    method: "PATCH",
     headers: {
       "Content-Type": "application/json",
     },

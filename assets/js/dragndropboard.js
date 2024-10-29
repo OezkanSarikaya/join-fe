@@ -20,9 +20,13 @@ function allowDrop(ev) {
  * That function update in the data base the current status of the task that was moved. Then show the task in he current column.
  * @param {number} status - that is the number of the kind of task that will be taken.
  */
-async function moveTo(status) {      
-    let firebaseURL= `/tasks/${currentDragElement}/status`; 
-    await putData(status, firebaseURL);
+async function moveTo(status) {   
+    const TaskID = tasks[currentDragElement].id;
+    let firebaseURL= `tasks/${TaskID}`; 
+    let statusData = {
+        "status": status
+    };
+    await putData(statusData, firebaseURL);
     document.getElementById("toDoBoard").classList.remove('drag-area-highlight');
     document.getElementById("inProgress").classList.remove('drag-area-highlight');
     document.getElementById("awaitFeedback").classList.remove('drag-area-highlight');

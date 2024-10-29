@@ -139,7 +139,7 @@ function openPopup() {
  * @param {string} phone - the phone number of the contact
  * @param {integer} id - the index number of the sorted array
  */
-async function openEditContactPopup(iconColor, contactName, contactMail, initials, results, phone, id) {
+async function openEditContactPopup(iconColor, contactName, contactMail, initials, results, phone, id, contactId) {
   clearContactForm();
   document.getElementById("template").classList.remove("addContact");
   document.getElementById("template").classList.add("editContact");
@@ -150,7 +150,7 @@ async function openEditContactPopup(iconColor, contactName, contactMail, initial
   changeContactPopup("Edit");
   document
     .getElementById("addContactForm")
-    .setAttribute("onsubmit", 'updateContact("' + results + '",' + id + "); return false;");
+    .setAttribute("onsubmit", 'updateContact("' + contactId + '",' + id + "); return false;");
   document
     .getElementById("contactFormLeftButton")
     .setAttribute("onclick", `deleteContact('${results}','${contactMail}'); return false;`);

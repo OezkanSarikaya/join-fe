@@ -17,17 +17,17 @@ function categoryColor(category) {
  * @returns The name of the icon that should be render in the tag <img>
  */
 function showingPriorityBoard(taskPriority) {
-  if (taskPriority == "High") {
+  if (taskPriority == "urgent") {
     return "urgent_high_priority_icon.svg";
-  } else if (taskPriority == "Medium") {
+  } else if (taskPriority == "medium") {
     return "priority_symbols_icon.svg";
-  } else if (taskPriority == "Low") {
+  } else if (taskPriority == "low") {
     return "urgent_low_priority_icon.svg";
   }
 }
 
 /**
- * This function render the HTML of name of pople assigned in a Task
+ * This function render the HTML of name of people assigned in a Task
  * @param {object} task - That is the complete task.
  * @param {number} i - The index of the task in tasks array
  * @param {idContainer} idContainerSubTask - idContainer where the user will be render
@@ -35,17 +35,25 @@ function showingPriorityBoard(taskPriority) {
 function renderHTMLUserinTask(task, i, idContainerUserTask) {
   let userTaskBoard = document.getElementById(`${idContainerUserTask}${i}`);
   userTaskBoard.innerHTML = "";
-  if (task["nameAssignedTask"]) {
-    let taskArray = Object.values(task["nameAssignedTask"]);
+  if (task["nameAssignedTask_details"]) {
+    let taskArray = Object.values(task["nameAssignedTask_details"]);
+    // let taskArray = task.nameAssignedTask_details;
     for (let j = 0; j < 4; j++) {
       const userTask = taskArray[j];
       let userColorIndex;
+      
+      
       if (userTask != null) {
-        userColorIndex = +userTask.colorIndex;
+        // userColorIndex = +userTask.colorIndex;
+        userColorIndex = +userTask.color;
+        
         const userColor = colors[userColorIndex].color;
+        // console.log(userTask,userColorIndex,userColor);
         const initialName = getInitials(userTask.name);
         userTaskBoard.innerHTML += /*html*/ `
-          <span class="profileSmall" style="background-color: ${userColor}">${initialName}</span>
+         
+            <span class="profileSmall" style="background-color: ${userColor}">${initialName}</span>
+          <!-- <span class="profileSmall">${initialName}</span> -->
         `;
       }
     }
@@ -71,8 +79,13 @@ function changeTypeOfTask(typeTask) {
  * @param {string} firebaseKey - id Task to delete
  */
 async function deleteTask(firebaseKey) {
-  await deleteData("/tasks/" + firebaseKey);
-  loadDataBoard();
+  // console.log(firebaseKey);
+  
+  await deleteData("tasks/" + firebaseKey);  
+  await loadDataBoard();
+  await loadData("tasks");
+ 
+  
   closeDialog();
 }
 
@@ -81,10 +94,11 @@ async function deleteTask(firebaseKey) {
  * @param {string} firebaseKey - id Subatask to update
  * @param {number} subtaskId - Index of the subTask in the array in data base
  */
-async function updateSubTask(firebaseKey, subtaskId) {
-  let isChecked = document.getElementById(`subTask${subtaskId}`).checked;
-  let idString = `/tasks/${firebaseKey}/subTasks/${subtaskId}/statusSubTask`;
-  await putData(isChecked, idString);
+async function updateSubTask(firebaseKey, subtaskId, subtaskIndex) {
+  let isChecked = document.getElementById(`subTask${subtaskIndex}`).checked;
+  // let idString = `tasks/${firebaseKey}/edit_subtask/${subtaskId}/statusSubTask`;
+  let idString = `tasks/${firebaseKey}/update_subtask_status/${subtaskId}`;
+  await putData({ statusSubTask: isChecked }, idString);
   loadDataBoard();
 }
 
@@ -106,9 +120,9 @@ function editTask() {
  */
 function fillingAssignUserEdit() {
   //let arrayContact = [];
-  if (currentTask.nameAssignedTask) {
-    for (let i = 0; i < currentTask.nameAssignedTask.length; i++) {
-      const assignedContact = currentTask.nameAssignedTask[i];
+  if (currentTask.nameAssignedTask_details) {
+    for (let i = 0; i < currentTask.nameAssignedTask_details.length; i++) {
+      const assignedContact = currentTask.nameAssignedTask_details[i];
       if (assignedContact != null) {
         //arrayContact.push(assignedContact);
         let allContacts = document.getElementById("assigned-task");

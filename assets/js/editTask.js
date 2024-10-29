@@ -3,15 +3,15 @@
  */
 async function saveEditedTask() {
   let task = editingObjetTask();
-  await putData(task, `/tasks/${currentTaskId}`);  
+  const index = tasks.findIndex((element) => element.id === currentTaskId);
+  await putData(task, `tasks/${currentTaskId}`);    
   await loadData('tasks');
-  //Testing if the function exist
-  if(typeof renderHTMLBoard === 'function') {
-    await renderHTMLBoard();
-  }
-  openDialog('task_popup_template.html', `${currentTaskId}`)
+  await renderHTMLBoard();
+  await loadData("tasks");
+  openDialog('task_popup_template.html', index) 
   closeDropDownAssignUser();
   typeOfTask = 1;
+  // loadDataBoard();
 }
 
 /**

@@ -5,6 +5,7 @@ async function loadDataBoard() {
   await loadData("contacts");
   await loadData("tasks");
   await renderHTMLBoard();
+  await loadData("tasks");
 }
 
 /**
@@ -57,14 +58,21 @@ function ifTaskPopTemplate(taskId) {
 }
 
 /**
- * This function save in the variable currentTask, the data of the task that is showd in pop
+ * This function save in the variable currentTask, the data of the task that is showed in pop
  * @param {string} taskId
  */
 function dataCurrentTask(taskId) {
   let allIdTasks = Object.keys(tasks);
   let allTasks = Object.values(tasks);
   let idFound = allIdTasks.findIndex((task) => task == taskId);
-  currentTaskId = taskId;
+  // currentTaskId = taskId;
+  currentTaskId = tasks[+taskId].id;
+  // console.log(currentTaskId, +taskId);
+  
+  // console.log('tasks[taskId].id: '+tasks[taskId].id);
+  
+  // idFound = currentTaskId;
+  // currentTaskId = tasks[taskId].id;
   currentTask = allTasks[idFound];
 }
 
@@ -79,6 +87,7 @@ function renderDataHTMLtaskPopupTemplate() {
   document.getElementById("title-task-show-task").textContent = `${currentTask.titleTask}`;
   document.getElementById("description-task-show-task").textContent = `${currentTask.descriptionTask}`;
   document.getElementById("date-task-show-task").textContent = `${currentTask.timeDeadlineTask}`;
+
   document
     .getElementById("prio-task-show-task")
     .setAttribute("src", `./assets/img/${showingPriorityBoard(currentTask.priorityTask)}`);
@@ -94,7 +103,7 @@ function renderUserPopupTask() {
   let containerUser = document.getElementById("user-task-show-task");
   let headlineUser = document.getElementById("headline-user-assigned");
   containerUser.innerHTML = "";
-  let users = currentTask.nameAssignedTask;
+  let users = currentTask.nameAssignedTask_details;
   if (users) {
     headlineUser.textContent = "Assigned To:";
     for (let i = 0; i < users.length; i++) {
@@ -116,14 +125,16 @@ function renderSubtaskHTMLPopupTask() {
   let headlineSubtask = document.getElementById("headline-subtasks-popup");
   containerSubtask.innerHTML = "";
   let subTasks = currentTask.subTasks;
+  // console.log(currentTask);
+  
   if (subTasks) {
     headlineSubtask.textContent = "Subtasks";
     for (let i = 0; i < subTasks.length; i++) {
       const subTask = subTasks[i];
-      
-      
+console.log(currentTaskId, currentTask.subTasks[i].id);
+
       containerSubtask.innerHTML += /*html*/ `
-        <input type="checkbox" onclick="updateSubTask('${currentTaskId}',${i})" name="checkbox-subTask" id="subTask${i}" />
+        <input type="checkbox" onclick="updateSubTask('${currentTaskId}',${currentTask.subTasks[i].id},${i})" name="checkbox-subTask" id="subTask${i}" />
         <label for="subTask${i}">${subTask.subTaskName}</label>
       `;
       let inputSubTask = document.getElementById(`subTask${i}`);
@@ -154,7 +165,12 @@ function filterTasks() {
  * This function render the cards of tasks in Board
  */
 async function renderHTMLBoard(filterTask) {
-  let listTasks = Object.values(tasks);
+  // console.log('renderHTMLBoard',tasks);
+  
+  // let listTasks = Object.values(tasks);
+  let listTasks = tasks;
+  
+  // let listTasks = tasks;
   let listTaskId = Object.keys(tasks);
   if (filterTask) {
     let filteredTasks;
@@ -168,7 +184,13 @@ async function renderHTMLBoard(filterTask) {
   for (let k = 0; k < listTasks.length; k++) {
     const task = listTasks[k];
     task.id = listTaskId[k];
+    // console.log(task.id );
+    
+    // task.id = tasks.id;
   }
+ 
+  
+  
   renderToDoTask(listTasks);
   renderInProgressTask(listTasks);
   renderAwaitFeedBackTask(listTasks);
@@ -181,9 +203,9 @@ async function renderHTMLBoard(filterTask) {
  */
 function alertNoTaskFound(filteredTasks) {
   if (filteredTasks.length == 0) {
-    document.getElementById('container-boardNoResult-alert').textContent = " No results";
-  }else{
-    document.getElementById('container-boardNoResult-alert').textContent = "";
+    document.getElementById("container-boardNoResult-alert").textContent = " No results";
+  } else {
+    document.getElementById("container-boardNoResult-alert").textContent = "";
   }
 }
 
@@ -197,6 +219,8 @@ function renderToDoTask(listTasks) {
   let toDo = listTasks.filter((task) => task.status == 1);
   for (let i = 0; i < toDo.length; i++) {
     const task = toDo[i];
+    // console.log(task);
+    
     let statusSubTask = showStatusSubTask(task);
     containerToDo.innerHTML += /*html*/ `${renderHTMLTasksBoard(
       task,
@@ -206,7 +230,11 @@ function renderToDoTask(listTasks) {
       statusSubTask.countSubTasksDone,
       statusSubTask.porcentTaskDone
     )}`;
+    // console.log('renderToDoTask',task.id, i);
+    
     renderHTMLUserinTask(task, i, "usertoDoTask-board");
+    // renderHTMLUserinTask(4, 2, "usertoDoTask-board");
+  
   }
   if (toDo.length == 0) {
     containerToDo.innerHTML += /*html*/ `
@@ -325,6 +353,9 @@ function showStatusSubTask(task) {
 function renderHTMLTasksBoard(task, i, idContainerSubTask, idContainerUserTask, countSubTasksDone, porcentTaskDone) {
   let subTasks = task["subTasks"];
   let taskDesription = task.descriptionTask;
+  // const result = tasks.find(item => item.id === 2);
+  // console.log(idContainerUserTask,i,task);
+  
   if (taskDesription.length > 70) {
     taskDesription = taskDesription.substring(0, 70) + "...";
   }
@@ -391,4 +422,3 @@ function resizeMenuDragMobile() {
     }
   }
 }
-

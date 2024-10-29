@@ -148,6 +148,8 @@ function createTaskObject(status) {
     subTasks: subTasks,
     status: status,
   };
+
+
   return task;
 }
 
@@ -215,13 +217,19 @@ function selectdNameAssignedtask() {
   for (const checkbox of checkBoxSelected) {
     let i = checkbox.dataset.id;
     if (document.getElementById(`checkBoxAssigned${i}`).checked) {
-      arrayPersonInTask.push({
-        name: checkbox.dataset.name,
-        email: checkbox.dataset.email,
-        colorIndex: checkbox.dataset.colorindex,
-      });
+
+    
+      contactID= contacts[checkbox.dataset.id].id;
+      arrayPersonInTask.push(contactID);
+      // arrayPersonInTask.push({
+      //   name: checkbox.dataset.name,
+      //   email: checkbox.dataset.email,
+      //   colorIndex: checkbox.dataset.colorindex,
+      // });
     }
   }
+  // console.log(arrayPersonInTask);
+  
   return arrayPersonInTask;
 }
 
@@ -249,9 +257,17 @@ function showInitialAssign() {
   let objectPerson = selectdNameAssignedtask();
   if (objectPerson.length >= 1) {
     for (let i = 0; i < objectPerson.length; i++) {
-      let person = objectPerson[i].name;
-      let colorIndex = objectPerson[i].colorIndex;
-      let name = getInitials(`${person}`);
+      // let person = objectPerson[i].name;
+      let personID = objectPerson[i];
+      
+      // let colorIndex = objectPerson[i].colorIndex;
+      
+      const result = contacts.find(contact => contact.id === personID);
+      // console.log('objectPerson',personID, contacts[i]['id'],contacts[personID]['name']);
+      // console.log(result.color);
+      let colorIndex = result.color;
+      let name = getInitials(`${result.name}`);
+      
       fisrtLetterContainer.innerHTML += /*html*/ `
 				<span class="first-letter" style="background-color: ${colors[colorIndex].color}">${name}</span>
 			`;
