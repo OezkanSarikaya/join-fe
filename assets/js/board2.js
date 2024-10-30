@@ -204,12 +204,13 @@ function changePriorityEditTask(idPriorityButton) {
 /**
  * This function search a Task
  */
-function searchTasks() {
+async function searchTasks() {
   let filterTask = document.getElementById("searchTask").value;
   filterTask = filterTask.toLowerCase();
  
   
   renderHTMLBoard(filterTask);
+  await loadData("tasks");
 }
 
 /**
