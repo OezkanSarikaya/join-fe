@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: board.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: board.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * This function bring all Data from datBase: contacts &amp; tasks
+ */
+async function loadDataBoard() {
+  await loadData("contacts");
+  await loadData("tasks");
+  await renderHTMLBoard();
+  await loadData("tasks");
+}
+
+/**
+ * This function open Popup add Task or task/ depends
+ * @param {string} template - name of template that will be opened
+ * @param {string} taskId - Id of the task
+ */
+async function openDialog(template, taskId) {
+  document.getElementById("innerDialog").classList.remove("d-none");
+  document.getElementById("innerDialog").classList.remove("animate__slideOutRight");
+  document.getElementById("innerDialog").classList.add("animate__slideInRight");
+  document.getElementById("dialog").classList.add("animate__fadeIn");
+  document.getElementById("dialog").classList.remove("animate__fadeOut");
+  document.getElementById("dialog").classList.remove("d-none");
+  document.body.classList.add("noscroll");
+  if (template == "add_task_template.html") {
+    ifAddTaskTemplate();
+  } else {
+    ifTaskPopTemplate(taskId);
+  }
+}
+
+/**
+ * This function will be execute if the addTask pop is loading
+ */
+function ifAddTaskTemplate() {
+  document.getElementById("add_task_form").setAttribute("onsubmit", "addTask(); return false;");
+  document.getElementById("addTaskPopup").classList.remove("d-none");
+  document.getElementById("showTaskPopup").classList.add("d-none");
+  document.getElementById("footer-button-addtask").classList.add("position-relative");
+  document.getElementById("innerDialog").classList.remove("taskPopup");
+  document.getElementById("innerDialog").classList.add("addTaskPopup");
+  document.getElementById("addTaskPopup").classList.add("mobile-version-only");
+  document.getElementById("addTaskPopup").classList.add("desktop-version-only");
+}
+
+/**
+ * This function will be execute if taskPop will loaded
+ * @param {string} taskId - That is the id of the Task from firebase
+ */
+function ifTaskPopTemplate(taskId) {
+  document.getElementById("innerDialog").classList.add("taskPopup");
+  document.getElementById("innerDialog").classList.remove("addTaskPopup");
+  dataCurrentTask(taskId);
+  document.getElementById("showTaskPopup").classList.remove("d-none");
+  document.getElementById("addTaskPopup").classList.add("d-none");
+  document.getElementById("title-task-show-task").classList.add("h2-size-edit");
+  document.getElementById("innerDialog").classList.add("editing");
+  renderDataHTMLtaskPopupTemplate();
+}
+
+/**
+ * This function save in the variable currentTask, the data of the task that is showed in pop
+ * @param {string} taskId
+ */
+function dataCurrentTask(taskId) {
+  let allIdTasks = Object.keys(tasks);
+  let allTasks = Object.values(tasks);
+  let idFound = allIdTasks.findIndex((task) => task == taskId);
+  // currentTaskId = taskId;
+  currentTaskId = tasks[+taskId].id;
+  // console.log(currentTaskId, +taskId);
+  
+  // console.log('tasks[taskId].id: '+tasks[taskId].id);
+  
+  // idFound = currentTaskId;
+  // currentTaskId = tasks[taskId].id;
+  currentTask = allTasks[idFound];
+}
+
+/**
+ * Render the task pop html
+ */
+function renderDataHTMLtaskPopupTemplate() {
+  let categoryTask = document.getElementById("category-task-show-task");
+  categoryTask.textContent = `${currentTask.categoryTask}`;
+  categoryTask.classList.remove("userStory", "technicalTask");
+  categoryTask.classList.add(categoryColor(currentTask.categoryTask));
+  document.getElementById("title-task-show-task").textContent = `${currentTask.titleTask}`;
+  document.getElementById("description-task-show-task").textContent = `${currentTask.descriptionTask}`;
+  document.getElementById("date-task-show-task").textContent = `${currentTask.timeDeadlineTask}`;
+
+  document
+    .getElementById("prio-task-show-task")
+    .setAttribute("src", `./assets/img/${showingPriorityBoard(currentTask.priorityTask)}`);
+  document.getElementById("name-prio").textContent = currentTask.priorityTask;
+  renderUserPopupTask();
+  renderSubtaskHTMLPopupTask();
+}
+
+/**
+ * This function render the user in the pop up task
+ */
+function renderUserPopupTask() {
+  let containerUser = document.getElementById("user-task-show-task");
+  let headlineUser = document.getElementById("headline-user-assigned");
+  containerUser.innerHTML = "";
+  let users = currentTask.nameAssignedTask_details;
+  if (users) {
+    headlineUser.textContent = "Assigned To:";
+    for (let i = 0; i &lt; users.length; i++) {
+      const user = users[i];
+      if (user != null) {
+        containerUser.innerHTML += /*html*/ `${userHTMLBoard(user)}`;
+      }
+    }
+  } else {
+    headlineUser.textContent = "";
+  }
+}
+
+/**
+ * Render the subTask in the pop up
+ */
+function renderSubtaskHTMLPopupTask() {
+  let containerSubtask = document.getElementById("subtasks-task-show-task");
+  let headlineSubtask = document.getElementById("headline-subtasks-popup");
+  containerSubtask.innerHTML = "";
+  let subTasks = currentTask.subTasks;
+  // console.log(currentTask);
+  
+  if (subTasks) {
+    headlineSubtask.textContent = "Subtasks";
+    for (let i = 0; i &lt; subTasks.length; i++) {
+      const subTask = subTasks[i];
+// console.log(currentTaskId, currentTask.subTasks[i].id);
+
+      containerSubtask.innerHTML += /*html*/ `
+        &lt;input type="checkbox" onclick="updateSubTask('${currentTaskId}',${currentTask.subTasks[i].id},${i})" name="checkbox-subTask" id="subTask${i}" />
+        &lt;label for="subTask${i}">${subTask.subTaskName}&lt;/label>
+      `;
+      let inputSubTask = document.getElementById(`subTask${i}`);
+      if (subTask.statusSubTask) {
+        inputSubTask.setAttribute("checked", true);
+      }
+    }
+  } else {
+    headlineSubtask.textContent = "";
+  }
+}
+
+/**
+ * This timeout was used to avoid the delay when the page is load and the function loadDataBoard
+ */
+setTimeout(loadDataBoard, 500);
+
+/**
+ * This function filter task
+ */
+function filterTasks() {
+  let filterString = document.getElementById("searchTask").value;
+  filterString = filterString.toLowerCase();
+  renderHTMLBoard(filterString);
+}
+
+/**
+ * This function render the cards of tasks in Board
+ */
+async function renderHTMLBoard(filterTask) {
+  // console.log('renderHTMLBoard',tasks);
+  
+  let listTasks = Object.values(tasks);
+  // let listTasks = tasks;
+  
+  let listTaskId = Object.keys(tasks);
+
+  for (let k = 0; k &lt; listTasks.length; k++) {
+    const task = listTasks[k];
+    task.id = listTaskId[k];
+  }
+  
+  if (filterTask) {
+    let filteredTasks;
+    filteredTasks = listTasks.filter(
+      (task) =>
+        task.titleTask.toLowerCase().includes(filterTask) || task.descriptionTask.toLowerCase().includes(filterTask)
+    );
+    listTasks = filteredTasks;
+    alertNoTaskFound(filteredTasks);
+  }
+
+
+  
+  
+  renderToDoTask(listTasks);
+  renderInProgressTask(listTasks);
+  renderAwaitFeedBackTask(listTasks);
+  renderDoneTask(listTasks);
+}
+
+/**
+ * This function send a notifications if any task was found
+ * @param {array} filteredTasks - array of task found
+ */
+function alertNoTaskFound(filteredTasks) {
+  if (filteredTasks.length == 0) {
+    document.getElementById("container-boardNoResult-alert").textContent = " No results";
+  } else {
+    document.getElementById("container-boardNoResult-alert").textContent = "";
+  }
+}
+
+/**
+ * This function render all to-do tasks
+ * @param {Array} listTasks - Array of Tasks
+ */
+function renderToDoTask(listTasks) {
+  let containerToDo = document.getElementById("toDoBoard");
+  containerToDo.innerHTML = "";
+  let toDo = listTasks.filter((task) => task.status == 1);
+  for (let i = 0; i &lt; toDo.length; i++) {
+    const task = toDo[i];
+    // console.log(task);
+    
+    let statusSubTask = showStatusSubTask(task);
+    containerToDo.innerHTML += /*html*/ `${renderHTMLTasksBoard(
+      task,
+      i,
+      "container-board-subTask-toDo",
+      "usertoDoTask-board",
+      statusSubTask.countSubTasksDone,
+      statusSubTask.porcentTaskDone
+    )}`;
+    // console.log('renderToDoTask',task.id, i);
+    
+    renderHTMLUserinTask(task, i, "usertoDoTask-board");
+    // renderHTMLUserinTask(4, 2, "usertoDoTask-board");
+  
+  }
+  if (toDo.length == 0) {
+    containerToDo.innerHTML += /*html*/ `
+    &lt;article id="container-todo" class="emptyTaskCard">No tasks To do&lt;/article>
+    `;
+  }
+}
+
+/**
+ * This function render all in progress tasks
+ * @param {object} listTasks array of tasks
+ */
+function renderInProgressTask(listTasks) {
+  let containerProgress = document.getElementById("inProgress");
+  containerProgress.innerHTML = "";
+  let progress = listTasks.filter((task) => task.status == 2);
+  for (let i = 0; i &lt; progress.length; i++) {
+    const task = progress[i];
+    let statusSubTask = showStatusSubTask(task);
+    containerProgress.innerHTML += /*html*/ `${renderHTMLTasksBoard(
+      task,
+      i,
+      "container-board-subTask-progress",
+      "userProgressTask-board",
+      statusSubTask.countSubTasksDone,
+      statusSubTask.porcentTaskDone
+    )}`;
+    renderHTMLUserinTask(task, i, "userProgressTask-board");
+  }
+  if (progress.length == 0) {
+    containerProgress.innerHTML += /*html*/ `
+    &lt;article id="container-todo" class="emptyTaskCard">No tasks in Progress&lt;/article>
+    `;
+  }
+}
+
+/**
+ * This function render all await feedback tasks
+ * @param {object} listTasks - array of tasks
+ */
+function renderAwaitFeedBackTask(listTasks) {
+  let containerAwaitFeedBack = document.getElementById("awaitFeedback");
+  containerAwaitFeedBack.innerHTML = "";
+  let awaitFeeback = listTasks.filter((task) => task.status == 3);
+  for (let i = 0; i &lt; awaitFeeback.length; i++) {
+    const task = awaitFeeback[i];
+    let statusSubTask = showStatusSubTask(task);
+    containerAwaitFeedBack.innerHTML += /*html*/ `${renderHTMLTasksBoard(
+      task,
+      i,
+      "container-board-subTask-awaitFeeback",
+      "userAwaitFeedbackTask-board",
+      statusSubTask.countSubTasksDone,
+      statusSubTask.porcentTaskDone
+    )}`;
+    renderHTMLUserinTask(task, i, "userAwaitFeedbackTask-board");
+  }
+  if (awaitFeeback.length == 0) {
+    containerAwaitFeedBack.innerHTML += /*html*/ `
+    &lt;article id="container-todo" class="emptyTaskCard">No tasks await Feedback&lt;/article>
+    `;
+  }
+}
+
+/**
+ * This function render all to-do tasks
+ * @param {Array} listTasks - array of tasks
+ */
+function renderDoneTask(listTasks) {
+  let containerDone = document.getElementById("done");
+  containerDone.innerHTML = "";
+  let done = listTasks.filter((task) => task.status == 4);
+  for (let i = 0; i &lt; done.length; i++) {
+    const task = done[i];
+    let statusSubTask = showStatusSubTask(task);
+    containerDone.innerHTML += /*html*/ `${renderHTMLTasksBoard(
+      task,
+      i,
+      "container-board-subTask-done",
+      "userDoneTask-board",
+      statusSubTask.countSubTasksDone,
+      statusSubTask.porcentTaskDone
+    )}`;
+    renderHTMLUserinTask(task, i, "userDoneTask-board");
+  }
+  if (done.length == 0) {
+    containerDone.innerHTML += /*html*/ `
+    &lt;article id="container-todo" class="emptyTaskCard">No tasks Done&lt;/article>
+    `;
+  }
+}
+
+/**
+ * This function return how many subTask has the Task and what ist the % of subTask completed
+ * @param {object} task - That is that object subtask
+ * @returns return how many subTask has the Task and what ist the % of subTask completed
+ */
+function showStatusSubTask(task) {
+  let countSubTasksDone = 0;
+  let porcentTaskDone = 0;
+  if (task.subTasks) {
+    let allSubTasks = task.subTasks;
+    let subTasksDone = allSubTasks.filter((task) => task.statusSubTask == true);
+    countSubTasksDone = subTasksDone.length;
+    porcentTaskDone = (countSubTasksDone / allSubTasks.length) * 100;
+  }
+  return { countSubTasksDone, porcentTaskDone };
+}
+
+/**
+ * This function render the HTML of tasks
+ * @param {object} task - That is the complete task object
+ * @param {number} i - The index of the task in tasks array
+ * @returns
+ */
+function renderHTMLTasksBoard(task, i, idContainerSubTask, idContainerUserTask, countSubTasksDone, porcentTaskDone) {
+  let subTasks = task["subTasks"];
+  let taskDesription = task.descriptionTask;
+  // const result = tasks.find(item => item.id === 2);
+  // console.log(idContainerUserTask,i,task);
+  
+  if (taskDesription.length > 70) {
+    taskDesription = taskDesription.substring(0, 70) + "...";
+  }
+  return /*html*/ `${templateTaskBoard(
+    task,
+    i,
+    idContainerSubTask,
+    idContainerUserTask,
+    countSubTasksDone,
+    porcentTaskDone,
+    subTasks,
+    taskDesription
+  )}`;
+}
+
+/**
+ * That function hidde the colummn where the task is
+ * @param {string} idMenu - That is the id of the menu mobile drag drop
+ * @param {number} status - that is type of Task where that Task is
+ */
+function showingColumnButOwn(idMenu, status) {
+  let menu = document.getElementById(`${idMenu}`);
+  let links = menu.querySelectorAll("p");
+  for (let i = 0; i &lt; links.length; i++) {
+    const link = links[i];
+    if (i + 1 == status) {
+      link.classList.add("d-none");
+    }
+  }
+}
+
+/**
+ * This function move a task to another column of type of task
+ * @param {number} status - id of the colummn to move
+ * @param {number} taskId - Id task to move
+ */
+async function moveToColumn(status, taskId) {
+  let firebaseURL = `/tasks/${taskId}/status`;
+  await putData(status, firebaseURL);
+  await loadDataBoard();
+  resizeMenuDragMobile();
+}
+
+/**
+ * This function open and close the menu drag &amp; drop
+ * @param {number} idMenu - That ist the id of the menu drag
+ */
+function showDragMenuMobile(idMenu, status) {
+  showingColumnButOwn(idMenu, status);
+  document.getElementById(`${idMenu}`).classList.toggle("d-none");
+  document.getElementById(`${idMenu}`).classList.toggle("menu-drag-open");
+}
+
+/**
+ * This function close the menu drag &amp; drop when the page is resized
+ */
+function resizeMenuDragMobile() {
+  let MenuOpenDrag = document.querySelectorAll("div");
+  for (let i = 0; i &lt; MenuOpenDrag.length; i++) {
+    const menu = MenuOpenDrag[i];
+    if (menu.classList.contains("menu-drag-open")) {
+      menu.classList.remove("menu-drag-open");
+      menu.classList.add("d-none");
+    }
+  }
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#addClassAnimationMobile">addClassAnimationMobile</a></li><li><a href="global.html#addClassForEdit">addClassForEdit</a></li><li><a href="global.html#addContact">addContact</a></li><li><a href="global.html#addNewUserDataBase">addNewUserDataBase</a></li><li><a href="global.html#addSubTask">addSubTask</a></li><li><a href="global.html#addTask">addTask</a></li><li><a href="global.html#alertCreatedTask">alertCreatedTask</a></li><li><a href="global.html#alertNoTaskFound">alertNoTaskFound</a></li><li><a href="global.html#allowDrop">allowDrop</a></li><li><a href="global.html#areAllFieldFilled">areAllFieldFilled</a></li><li><a href="global.html#asignedTaskContainerHTML">asignedTaskContainerHTML</a></li><li><a href="global.html#calculateDatePrio">calculateDatePrio</a></li><li><a href="global.html#calculateDays">calculateDays</a></li><li><a href="global.html#categoryColor">categoryColor</a></li><li><a href="global.html#categorySelected">categorySelected</a></li><li><a href="global.html#changeContactPopup">changeContactPopup</a></li><li><a href="global.html#changeDateFormat">changeDateFormat</a></li><li><a href="global.html#changeFooterEditTask">changeFooterEditTask</a></li><li><a href="global.html#changeHeadLineAddTaskPopUp">changeHeadLineAddTaskPopUp</a></li><li><a href="global.html#changeIconSubTask">changeIconSubTask</a></li><li><a href="global.html#changePriority">changePriority</a></li><li><a href="global.html#changePriorityEditTask">changePriorityEditTask</a></li><li><a href="global.html#changeTypeOfTask">changeTypeOfTask</a></li><li><a href="global.html#checkAllFieldFull">checkAllFieldFull</a></li><li><a href="global.html#checkMail">checkMail</a></li><li><a href="global.html#checkPassword">checkPassword</a></li><li><a href="global.html#checkingIfEmailAndPasswordExist">checkingIfEmailAndPasswordExist</a></li><li><a href="global.html#cleanSearchInput">cleanSearchInput</a></li><li><a href="global.html#clearContactForm">clearContactForm</a></li><li><a href="global.html#clearForm">clearForm</a></li><li><a href="global.html#closeAllTaps">closeAllTaps</a></li><li><a href="global.html#closeCategoryTap">closeCategoryTap</a></li><li><a href="global.html#closeCheckBoxesIfOpen">closeCheckBoxesIfOpen</a></li><li><a href="global.html#closeContactMenu">closeContactMenu</a></li><li><a href="global.html#closeDialog">closeDialog</a></li><li><a href="global.html#closeDropDownAssignUser">closeDropDownAssignUser</a></li><li><a href="global.html#closeErroCategory">closeErroCategory</a></li><li><a href="global.html#closeError">closeError</a></li><li><a href="global.html#closeShowContact">closeShowContact</a></li><li><a href="global.html#closeTaskPop">closeTaskPop</a></li><li><a href="global.html#colors">colors</a></li><li><a href="global.html#confirmEditSubTask">confirmEditSubTask</a></li><li><a href="global.html#contacts">contacts</a></li><li><a href="global.html#contactsListHtmlTemplate">contactsListHtmlTemplate</a></li><li><a href="global.html#countTaskSummary">countTaskSummary</a></li><li><a href="global.html#countTaskUrgent">countTaskUrgent</a></li><li><a href="global.html#createTaskObject">createTaskObject</a></li><li><a href="global.html#createTaskUrl">createTaskUrl</a></li><li><a href="global.html#currentDragElement">currentDragElement</a></li><li><a href="global.html#currentTask">currentTask</a></li><li><a href="global.html#currentTaskId">currentTaskId</a></li><li><a href="global.html#dataCurrentTask">dataCurrentTask</a></li><li><a href="global.html#dateFromTodayOnly">dateFromTodayOnly</a></li><li><a href="global.html#deleteContact">deleteContact</a></li><li><a href="global.html#deleteData">deleteData</a></li><li><a href="global.html#deleteDataFormTask">deleteDataFormTask</a></li><li><a href="global.html#deleteSubTask">deleteSubTask</a></li><li><a href="global.html#deleteTask">deleteTask</a></li><li><a href="global.html#deleteUserInTask">deleteUserInTask</a></li><li><a href="global.html#editCategorySetNotAvailable">editCategorySetNotAvailable</a></li><li><a href="global.html#editTask">editTask</a></li><li><a href="global.html#editingObjetTask">editingObjetTask</a></li><li><a href="global.html#editingSubTask">editingSubTask</a></li><li><a href="global.html#emptyInputSubTask">emptyInputSubTask</a></li><li><a href="global.html#fillingAssignUserEdit">fillingAssignUserEdit</a></li><li><a href="global.html#filterEmailAndPassword">filterEmailAndPassword</a></li><li><a href="global.html#filterEmailValidation">filterEmailValidation</a></li><li><a href="global.html#filterTasks">filterTasks</a></li><li><a href="global.html#findTaskUrlsByEmail">findTaskUrlsByEmail</a></li><li><a href="global.html#getInitials">getInitials</a></li><li><a href="global.html#getTimeOfDay">getTimeOfDay</a></li><li><a href="global.html#hiddeAlert">hiddeAlert</a></li><li><a href="global.html#highlight">highlight</a></li><li><a href="global.html#ifAddTaskTemplate">ifAddTaskTemplate</a></li><li><a href="global.html#ifResultCredentialBigZero">ifResultCredentialBigZero</a></li><li><a href="global.html#ifTaskPopTemplate">ifTaskPopTemplate</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#initAddTask">initAddTask</a></li><li><a href="global.html#initSummary">initSummary</a></li><li><a href="global.html#loadData">loadData</a></li><li><a href="global.html#loadDataBoard">loadDataBoard</a></li><li><a href="global.html#loadLocalStorage">loadLocalStorage</a></li><li><a href="global.html#loadSubaTaskInForm">loadSubaTaskInForm</a></li><li><a href="global.html#loggedIn">loggedIn</a></li><li><a href="global.html#login">login</a></li><li><a href="global.html#loginGuest">loginGuest</a></li><li><a href="global.html#logout">logout</a></li><li><a href="global.html#moveTo">moveTo</a></li><li><a href="global.html#moveToColumn">moveToColumn</a></li><li><a href="global.html#openContactButtons">openContactButtons</a></li><li><a href="global.html#openDialog">openDialog</a></li><li><a href="global.html#openEditContactPopup">openEditContactPopup</a></li><li><a href="global.html#openHeaderMenu">openHeaderMenu</a></li><li><a href="global.html#openNewContactPopup">openNewContactPopup</a></li><li><a href="global.html#openPopup">openPopup</a></li><li><a href="global.html#passwordValidation">passwordValidation</a></li><li><a href="global.html#postData">postData</a></li><li><a href="global.html#priorityTask">priorityTask</a></li><li><a href="global.html#putData">putData</a></li><li><a href="global.html#readLoggedInUser">readLoggedInUser</a></li><li><a href="global.html#registUser">registUser</a></li><li><a href="global.html#removeAllError">removeAllError</a></li><li><a href="global.html#removeClassToPopUp">removeClassToPopUp</a></li><li><a href="global.html#removeErrorFieldSignUp">removeErrorFieldSignUp</a></li><li><a href="global.html#removeHighlight">removeHighlight</a></li><li><a href="global.html#renderAwaitFeedBackTask">renderAwaitFeedBackTask</a></li><li><a href="global.html#renderContacts">renderContacts</a></li><li><a href="global.html#renderContactsAssignedTask">renderContactsAssignedTask</a></li><li><a href="global.html#renderDataHTMLtaskPopupTemplate">renderDataHTMLtaskPopupTemplate</a></li><li><a href="global.html#renderDoneTask">renderDoneTask</a></li><li><a href="global.html#renderHTMLBoard">renderHTMLBoard</a></li><li><a href="global.html#renderHTMLHeader">renderHTMLHeader</a></li><li><a href="global.html#renderHTMLSubTask">renderHTMLSubTask</a></li><li><a href="global.html#renderHTMLTasksBoard">renderHTMLTasksBoard</a></li><li><a href="global.html#renderHTMLUserinTask">renderHTMLUserinTask</a></li><li><a href="global.html#renderHeader">renderHeader</a></li><li><a href="global.html#renderInProgressTask">renderInProgressTask</a></li><li><a href="global.html#renderSubtaskHTMLPopupTask">renderSubtaskHTMLPopupTask</a></li><li><a href="global.html#renderToDoTask">renderToDoTask</a></li><li><a href="global.html#renderUserPopupTask">renderUserPopupTask</a></li><li><a href="global.html#resetPriority">resetPriority</a></li><li><a href="global.html#resizeChangeAddTaskMobile">resizeChangeAddTaskMobile</a></li><li><a href="global.html#resizeMenuDragMobile">resizeMenuDragMobile</a></li><li><a href="global.html#saveEditedTask">saveEditedTask</a></li><li><a href="global.html#searchTasks">searchTasks</a></li><li><a href="global.html#searchingTypeTaskURL">searchingTypeTaskURL</a></li><li><a href="global.html#selectdNameAssignedtask">selectdNameAssignedtask</a></li><li><a href="global.html#setActiveContact">setActiveContact</a></li><li><a href="global.html#setActiveMenueLinks">setActiveMenueLinks</a></li><li><a href="global.html#setColorUser">setColorUser</a></li><li><a href="global.html#setDateFormat">setDateFormat</a></li><li><a href="global.html#setStatusTask">setStatusTask</a></li><li><a href="global.html#showAlert">showAlert</a></li><li><a href="global.html#showCheckboxes">showCheckboxes</a></li><li><a href="global.html#showContact">showContact</a></li><li><a href="global.html#showDragMenuMobile">showDragMenuMobile</a></li><li><a href="global.html#showHideConfirmButton">showHideConfirmButton</a></li><li><a href="global.html#showInitialAssign">showInitialAssign</a></li><li><a href="global.html#showStatusSubTask">showStatusSubTask</a></li><li><a href="global.html#showSubTask">showSubTask</a></li><li><a href="global.html#showTaskOption">showTaskOption</a></li><li><a href="global.html#showingColumnButOwn">showingColumnButOwn</a></li><li><a href="global.html#showingPriorityBoard">showingPriorityBoard</a></li><li><a href="global.html#startDragging">startDragging</a></li><li><a href="global.html#statusTask">statusTask</a></li><li><a href="global.html#stopPropagation">stopPropagation</a></li><li><a href="global.html#subTasks">subTasks</a></li><li><a href="global.html#tasks">tasks</a></li><li><a href="global.html#templateTaskBoard">templateTaskBoard</a></li><li><a href="global.html#typeOfTask">typeOfTask</a></li><li><a href="global.html#uncheckedNameAssignedTask">uncheckedNameAssignedTask</a></li><li><a href="global.html#updateContact">updateContact</a></li><li><a href="global.html#updateContactDisplay">updateContactDisplay</a></li><li><a href="global.html#updateSubTask">updateSubTask</a></li><li><a href="global.html#updatingEditFormvalue">updatingEditFormvalue</a></li><li><a href="global.html#updatingSummaryData">updatingSummaryData</a></li><li><a href="global.html#userData">userData</a></li><li><a href="global.html#userFromLoggin">userFromLoggin</a></li><li><a href="global.html#userHTMLBoard">userHTMLBoard</a></li><li><a href="global.html#validateContactForm">validateContactForm</a></li><li><a href="global.html#validateEmail">validateEmail</a></li><li><a href="global.html#validationAddTask">validationAddTask</a></li><li><a href="global.html#validationEmail">validationEmail</a></li><li><a href="global.html#validationFieldSignUp">validationFieldSignUp</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.3</a> on Wed Oct 30 2024 12:55:20 GMT+0100 (Mitteleuropäische Normalzeit)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
