@@ -46,10 +46,17 @@ async function registUser() {
     "password": passwordIdSignUp.value,
     "color": await setColorUser(),
   };
+  let userData = {
+    "username": emailIdSignUp.value,
+    "email": emailIdSignUp.value,
+    "password": passwordIdSignUp.value,  
+    "repeated_password": passwordIdSignUp.value,  
+  };
   removeAllError('nameIdSignUp', 'emailIdSignUp', 'passwordIdSignUp', 'passwordConfirmIdSignUp');
   if (confirmSignUp.checked) {
     if (nameIdSignUp.value != "" && emailIdSignUp.value != "" && validateEmail(emailIdSignUp.value) && passwordIdSignUp.value != "" && passwordConfirmIdSignUp.value != "" && passwordIdSignUp.value === passwordConfirmIdSignUp.value) {
       await addNewUserDataBase(contact, nameIdSignUp, emailIdSignUp, passwordIdSignUp, passwordConfirmIdSignUp, confirmSignUp);
+      await postData(userData,"auth/registration");
       await loadData("contacts");
       showAlert("container-signUp-alert", "signUp-alert", "Success", "succes-alert", "The user was added successfully!");
     } else {
@@ -77,7 +84,7 @@ async function addNewUserDataBase(contact, nameIdSignUp, emailIdSignUp, password
     passwordIdSignUp.value = "";
     passwordConfirmIdSignUp.value = "";
     confirmSignUp.checked = false;
-    setTimeout(() => (location.href = "./index.html"), 2000);
+    // setTimeout(() => (location.href = "./index.html"), 2000);
 }
 
 /**
