@@ -67,7 +67,7 @@ async function addContact() {
           "name": nameContact.value,
           "password": "",
           "phone": phoneContact.value,
-          "user": false,
+          "is_user": false,
           
         };
         let postSuccess = await postData(contact, "contacts");

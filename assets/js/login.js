@@ -23,13 +23,34 @@ function loginGuest() {
 /**
  * Login in user and save session in localStorage or sessionStorage depending on remember me check
  */
-function login() {
+async function login() {
   let email = document.getElementById("email").value.trim();
   let password = String(document.getElementById("password").value.trim());
+  let loginData = {
+    "username": email,
+    "password": password,
+  };
+  let loginResult = await postData(loginData, "auth/login");
+  let initial = "";
+  // console.log(loginResult);
+  
+  if (loginResult["token"]) {
+    initial = getInitials(loginResult["name"]);
+  }
+  
+  // console.log(loginResult,loginResult['name'],initial);
+  let storageData = {
+    "token": loginResult["token"],
+    "initials": initial,
+    "mail": loginResult["email"],
+    "userName": loginResult["name"],
+  };
+  // console.log(storageData);
+  
   let credentials = 0;
   credentials = passwordValidation(password, credentials);
   credentials = validationEmail(email, credentials);
-  checkingIfEmailAndPasswordExist(credentials, email, password);
+  checkingIfEmailAndPasswordExist(credentials, email, password, storageData);
 }
 
 /**
@@ -38,19 +59,22 @@ function login() {
  * @param {string} email - email to validate in data base
  * @param {string} password - password to validate in data base
  */
-function checkingIfEmailAndPasswordExist(credentials, email, password) {
+function checkingIfEmailAndPasswordExist(credentials, email, password, storageData) {
   if (credentials == 2) {
     let checked = document.getElementById("confirm").checked;
-    let contact = Object.values(contacts);
-    let results = contact.filter((element) => element.email == email && element.password == password && element.user);
-    if (results.length > 0) {
-      console.log('here');
-      ifResultCredentialBigZero(checked, results, email);
+    // let contact = Object.values(contacts);
+    // let results = contact.filter(
+    //   (element) => element.email == email && element.password == password && element.is_user
+    // );
+    // if (results.length > 0) {
+      if (storageData.token) {
+      // console.log('here');
+      ifResultCredentialBigZero(checked, email, storageData);
     } else {
-      let results = contact.filter((element) => element.email == email && element.user);
-      filterEmailValidation(results);
-      results = contact.filter((element) => element.email == email && element.password == password && element.user);
-      filterEmailAndPassword(results);
+      // let results = contact.filter((element) => element.email == email && element.is_user);
+      // filterEmailValidation(results);
+      // results = contact.filter((element) => element.email == email && element.password == password && element.is_user);
+      // filterEmailAndPassword(results);
       document.getElementById("password").classList.add("inputRedBorder");
     }
   }
@@ -58,9 +82,9 @@ function checkingIfEmailAndPasswordExist(credentials, email, password) {
 
 /**
  * This function give a point if the password was filled, and let the function continue to the next validation
- * @param {string} password - password introduced 
+ * @param {string} password - password introduced
  * @param {number} credentials - firt level of validation. If the password was given, then continue the function to the next validation
- * @returns 
+ * @returns
  */
 function passwordValidation(password, credentials) {
   let results = credentials;
@@ -78,8 +102,8 @@ function passwordValidation(password, credentials) {
 /**
  * This function give a point if the password was filled, and let the function continue to the next validation
  * @param {string} email - Email introduced
- * @param {number} credentials - Second level of validation. If the password was given, then continue the function to the next validation 
- * @returns 
+ * @param {number} credentials - Second level of validation. If the password was given, then continue the function to the next validation
+ * @returns
  */
 function validationEmail(email, credentials) {
   let results = credentials;
@@ -100,21 +124,22 @@ function validationEmail(email, credentials) {
  * @param {object} results - That is an object that has the info of the person that loged in
  * @param {string} email - Email of the person who loged in
  */
-function ifResultCredentialBigZero(checked, results, email) {
-  let initial = getInitials(results[0].name);
-  let logData = {
-    "mail": email,
-    "initials": initial,
-    "userName": results[0].name,
-  };
+function ifResultCredentialBigZero(checked, email, storageData) {
+  // let initial = getInitials(results[0].name);
+  // let logData = {
+  //   "mail": email,
+  //   "initials": initial,
+  //   "userName": results[0].name,
+  // };
   if (checked) {
-    localStorage.setItem("Join", JSON.stringify(logData));
+    localStorage.setItem("Join", JSON.stringify(storageData));
     sessionStorage.clear();
   } else {
-    sessionStorage.setItem("Join", JSON.stringify(logData));
+    sessionStorage.setItem("Join", JSON.stringify(storageData));
     localStorage.clear();
   }
-  location.href = "./summary.html?login=true";
+  // location.href = "./summary.html?login=true";
+  location.href = "./summary.html";
 }
 
 /**This function check if the Field email is filled
@@ -133,7 +158,7 @@ function filterEmailValidation(results) {
 
 /**This function check if the Field password is filled
  * Second level of calification to messure if the field password is filled
- * @param {*} results 
+ * @param {*} results
  */
 function filterEmailAndPassword(results) {
   if (results.length == 0) {

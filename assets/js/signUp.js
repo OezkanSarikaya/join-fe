@@ -42,8 +42,8 @@ async function registUser() {
     "name": nameIdSignUp.value,
     "email": emailIdSignUp.value,
     "phone": "",
-    "user": true,
-    "password": passwordIdSignUp.value,
+    "is_user": true,
+    "password": "",
     "color": await setColorUser(),
   };
   let userData = {
@@ -55,9 +55,11 @@ async function registUser() {
   removeAllError('nameIdSignUp', 'emailIdSignUp', 'passwordIdSignUp', 'passwordConfirmIdSignUp');
   if (confirmSignUp.checked) {
     if (nameIdSignUp.value != "" && emailIdSignUp.value != "" && validateEmail(emailIdSignUp.value) && passwordIdSignUp.value != "" && passwordConfirmIdSignUp.value != "" && passwordIdSignUp.value === passwordConfirmIdSignUp.value) {
+      
       await addNewUserDataBase(contact, nameIdSignUp, emailIdSignUp, passwordIdSignUp, passwordConfirmIdSignUp, confirmSignUp);
       await postData(userData,"auth/registration");
       await loadData("contacts");
+      
       showAlert("container-signUp-alert", "signUp-alert", "Success", "succes-alert", "The user was added successfully!");
     } else {
       areAllFieldFilled('nameIdSignUp', 'emailIdSignUp', 'passwordIdSignUp', 'passwordConfirmIdSignUp', isEmail);
