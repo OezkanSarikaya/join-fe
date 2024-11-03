@@ -1,4 +1,4 @@
-loadData("contacts");
+// loadData("contacts");
 
 /**
  * Login in as Guest and save session in localStorage or sessionStorage depending on remember me check

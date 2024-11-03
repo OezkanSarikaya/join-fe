@@ -132,7 +132,7 @@ function readLoggedInUser() {
   setTimeout(setActiveMenueLinks, 600);
 
   if (!loggedIn && protectedPages.includes(page)) {
-    location.href = "./index.html";
+    // location.href = "./index.html";
   }
 
   return {
@@ -175,7 +175,26 @@ function setActiveMenueLinks() {
  * where the elements are saved.
  */
 async function loadData(path = "") {
-  let response = await fetch(BASE_URL + path);
+  let token ="";
+  if (localStorage.getItem("Join")) {
+    token = JSON.parse(localStorage.getItem("Join")).token;
+  }
+  if (sessionStorage.getItem("Join")) {
+    token = JSON.parse(sessionStorage.getItem("Join")).token;
+  }
+  try {
+  let response = await fetch(BASE_URL + path,{
+    method: 'GET',
+		headers: {
+			"Authorization":"Token "+token		
+		},
+
+  });
+  if (response.status === 401) {
+    // Fehler 401: Benutzer ist nicht authentifiziert, zur Anmeldeseite weiterleiten
+    window.location.href = '/'; // Hier die URL zur Login-Seite anpassen
+  }
+  else {
   let responseToJson = await response.json();
   if (path == "contacts") {
     !responseToJson ? (contacts = []) : (contacts = responseToJson);
@@ -183,8 +202,12 @@ async function loadData(path = "") {
   if (path == "tasks") {
     !responseToJson ? (tasks = []) : (tasks = responseToJson);
     // console.log(tasks);
-    
   }
+  }
+} catch (error) {
+
+  // console.error('Fetch-Fehler:', error);
+}
 }
 
 /**
@@ -237,9 +260,28 @@ function logout() {
  * @returns
  */
 async function postData(data = {}, path = "") {
+  let token ="";
+  if (localStorage.getItem("Join")) {
+    token = JSON.parse(localStorage.getItem("Join")).token;
+  }
+  if (sessionStorage.getItem("Join")) {
+    token = JSON.parse(sessionStorage.getItem("Join")).token;
+  }
+  let headers;
+  if (path == "auth/login") {
+headers = { "Content-Type": "application/json"
+  }
+
+  }
+  else {
+    headers = { "Content-Type": "application/json",
+      "Authorization":"Token "+token
+      }
+
+  }
   let response = await fetch(BASE_URL + path +"/", {
     method: "POST",
-    headers: { "Content-Type": "application/json"},
+    headers: headers,
     body: JSON.stringify(data),
   });
   return (responseToJson = await response.json());
@@ -252,10 +294,18 @@ async function postData(data = {}, path = "") {
  * @returns the object with all data in this path
  */
 async function putData(data, path = "") {
+  let token ="";
+  if (localStorage.getItem("Join")) {
+    token = JSON.parse(localStorage.getItem("Join")).token;
+  }
+  if (sessionStorage.getItem("Join")) {
+    token = JSON.parse(sessionStorage.getItem("Join")).token;
+  }
   let response = await fetch(BASE_URL + path +"/", {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
+      "Authorization":"Token "+token
     },
     body: JSON.stringify(data),
   });
@@ -268,8 +318,19 @@ async function putData(data, path = "") {
  * @returns returns the deleted item
  */
 async function deleteData(path = "") {
+  let token ="";
+  if (localStorage.getItem("Join")) {
+    token = JSON.parse(localStorage.getItem("Join")).token;
+  }
+  if (sessionStorage.getItem("Join")) {
+    token = JSON.parse(sessionStorage.getItem("Join")).token;
+  }
   let response = await fetch(BASE_URL + path +"/", {
-    method: "DELETE"
+    method: "DELETE",
+    headers: {
+      // "Content-Type": "application/json",
+      "Authorization":"Token "+token
+    }
     // headers: ("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE")
   });
   // return (responseToJSON = await response.json());
