@@ -132,7 +132,7 @@ function readLoggedInUser() {
   setTimeout(setActiveMenueLinks, 600);
 
   if (!loggedIn && protectedPages.includes(page)) {
-    // location.href = "./index.html";
+    location.href = "./index.html";
   }
 
   return {
@@ -175,7 +175,7 @@ function setActiveMenueLinks() {
  * where the elements are saved.
  */
 async function loadData(path = "") {
-  let token ="";
+  let token = "";
   if (localStorage.getItem("Join")) {
     token = JSON.parse(localStorage.getItem("Join")).token;
   }
@@ -183,31 +183,28 @@ async function loadData(path = "") {
     token = JSON.parse(sessionStorage.getItem("Join")).token;
   }
   try {
-  let response = await fetch(BASE_URL + path,{
-    method: 'GET',
-		headers: {
-			"Authorization":"Token "+token		
-		},
-
-  });
-  if (response.status === 401) {
-    // Fehler 401: Benutzer ist nicht authentifiziert, zur Anmeldeseite weiterleiten
-    window.location.href = '/'; // Hier die URL zur Login-Seite anpassen
+    let response = await fetch(BASE_URL + path, {
+      method: "GET",
+      headers: {
+        "Authorization": "Token " + token,
+      },
+    });
+    if (response.status === 401) {
+      // Fehler 401: Benutzer ist nicht authentifiziert, zur Anmeldeseite weiterleiten
+      window.location.href = "/"; // Hier die URL zur Login-Seite anpassen
+    } else {
+      let responseToJson = await response.json();
+      if (path == "contacts") {
+        !responseToJson ? (contacts = []) : (contacts = responseToJson);
+      }
+      if (path == "tasks") {
+        !responseToJson ? (tasks = []) : (tasks = responseToJson);
+        // console.log(tasks);
+      }
+    }
+  } catch (error) {
+    // console.error('Fetch-Fehler:', error);
   }
-  else {
-  let responseToJson = await response.json();
-  if (path == "contacts") {
-    !responseToJson ? (contacts = []) : (contacts = responseToJson);
-  }
-  if (path == "tasks") {
-    !responseToJson ? (tasks = []) : (tasks = responseToJson);
-    // console.log(tasks);
-  }
-  }
-} catch (error) {
-
-  // console.error('Fetch-Fehler:', error);
-}
 }
 
 /**
@@ -260,7 +257,7 @@ function logout() {
  * @returns
  */
 async function postData(data = {}, path = "") {
-  let token ="";
+  let token = "";
   if (localStorage.getItem("Join")) {
     token = JSON.parse(localStorage.getItem("Join")).token;
   }
@@ -269,17 +266,11 @@ async function postData(data = {}, path = "") {
   }
   let headers;
   if (path == "auth/login") {
-headers = { "Content-Type": "application/json"
+    headers = { "Content-Type": "application/json" };
+  } else {
+    headers = { "Content-Type": "application/json", "Authorization": "Token " + token };
   }
-
-  }
-  else {
-    headers = { "Content-Type": "application/json",
-      "Authorization":"Token "+token
-      }
-
-  }
-  let response = await fetch(BASE_URL + path +"/", {
+  let response = await fetch(BASE_URL + path + "/", {
     method: "POST",
     headers: headers,
     body: JSON.stringify(data),
@@ -294,22 +285,28 @@ headers = { "Content-Type": "application/json"
  * @returns the object with all data in this path
  */
 async function putData(data, path = "") {
-  let token ="";
+  let token = "";
   if (localStorage.getItem("Join")) {
     token = JSON.parse(localStorage.getItem("Join")).token;
   }
   if (sessionStorage.getItem("Join")) {
     token = JSON.parse(sessionStorage.getItem("Join")).token;
   }
-  let response = await fetch(BASE_URL + path +"/", {
+
+  let response = await fetch(BASE_URL + path + "/", {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
-      "Authorization":"Token "+token
+      "Authorization": "Token " + token,
     },
     body: JSON.stringify(data),
   });
-  return (responseToJSON = await response.json());
+
+  if (response.status === 403) {
+    return response.status;
+  } else {
+    return await response.json();
+  }
 }
 
 /**
@@ -318,19 +315,19 @@ async function putData(data, path = "") {
  * @returns returns the deleted item
  */
 async function deleteData(path = "") {
-  let token ="";
+  let token = "";
   if (localStorage.getItem("Join")) {
     token = JSON.parse(localStorage.getItem("Join")).token;
   }
   if (sessionStorage.getItem("Join")) {
     token = JSON.parse(sessionStorage.getItem("Join")).token;
   }
-  let response = await fetch(BASE_URL + path +"/", {
+  let response = await fetch(BASE_URL + path + "/", {
     method: "DELETE",
     headers: {
       // "Content-Type": "application/json",
-      "Authorization":"Token "+token
-    }
+      "Authorization": "Token " + token,
+    },
     // headers: ("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE")
   });
   // return (responseToJSON = await response.json());

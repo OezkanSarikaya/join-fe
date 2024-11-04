@@ -151,6 +151,7 @@ async function openEditContactPopup(iconColor, contactName, contactMail, initial
   document
     .getElementById("addContactForm")
     .setAttribute("onsubmit", 'updateContact("' + contactId + '",' + id + "); return false;");
+
   document
     .getElementById("contactFormLeftButton")
     .setAttribute("onclick", `deleteContact('${results}','${contactMail}'); return false;`);
@@ -191,15 +192,24 @@ async function updateContact(id, index) {
       "name": name,
       "email": mail,
       "phone": phone,
-      "user": false,
+      "is_user": false,
       "password": "",
       "color": color,
     };
     let idString = `contacts/${id}`;
-    await putData(data, idString);
+    let response = await putData(data, idString);
+    // console.log(response);
     closeDialog();
-    const iconColor = colors[contactDetails[index]["color"]].color;
-    updateContactDisplay(name, phone, mail, iconColor, index, id);
+    if (response!=403) {
+      const iconColor = colors[contactDetails[index]["color"]].color;
+      // console.log(index,id);
+      
+      updateContactDisplay(name, phone, mail, iconColor, index, id);
+    }
+    
+    
+    // const iconColor = colors[contactDetails[index]["color"]].color;
+    // updateContactDisplay(name, phone, mail, iconColor, index, id);
     renderContacts();
   }
 }
@@ -223,13 +233,15 @@ function updateContactDisplay(name, phone, mail, color, index, id) {
     .getElementById("editButton")
     .setAttribute(
       "onclick",
-      `openEditContactPopup('${color}','${name}', '${mail}','${initials}','${id}','${phone}',${index})`
+      // `openEditContactPopup('${color}','${name}', '${mail}','${initials}','${id}','${phone}',${index})`
+      `openEditContactPopup('${color}','${name}', '${mail}','${initials}','0','${phone}',${index},${id})`
     );
   document
     .getElementById("editButtonMobile")
     .setAttribute(
       "onclick",
-      `openEditContactPopup('${color}','${name}', '${mail}','${initials}','${id}','${phone}',${index})`
+      // `openEditContactPopup('${color}','${name}', '${mail}','${initials}','${id}','${phone}',${index})`
+      `openEditContactPopup('${color}','${name}', '${mail}','${initials}','0','${phone}',${index},${id})`
     );
 }
 
