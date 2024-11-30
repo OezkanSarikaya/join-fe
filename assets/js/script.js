@@ -103,6 +103,8 @@ function removeClassToPopUp() {
  * @returns - Returns the Name, Initials and username of the logged in user.
  */
 function readLoggedInUser() {
+  
+  
   let initials;
   let mail;
   let userName;
@@ -123,6 +125,7 @@ function readLoggedInUser() {
     loggedIn = true;
   }
   if (sessionStorage.getItem("Join")) {
+    
     initials = JSON.parse(sessionStorage.getItem("Join")).initials;
     mail = JSON.parse(sessionStorage.getItem("Join")).mail;
     userName = JSON.parse(sessionStorage.getItem("Join")).userName;
@@ -130,9 +133,10 @@ function readLoggedInUser() {
   }
   let page = window.location.href.substring(window.location.href.lastIndexOf("/") + 1);
   setTimeout(setActiveMenueLinks, 600);
-
+  // console.log('test',!loggedIn && protectedPages.includes(page));
   if (!loggedIn && protectedPages.includes(page)) {
-    location.href = "./index.html";
+    
+    // location.href = "./index.html";
   }
 
   return {
@@ -265,7 +269,7 @@ async function postData(data = {}, path = "") {
     token = JSON.parse(sessionStorage.getItem("Join")).token;
   }
   let headers;
-  if (path == "auth/login") {
+  if (path == "auth/login" || path == "contacts" || path == "auth/registration") {
     headers = { "Content-Type": "application/json" };
   } else {
     headers = { "Content-Type": "application/json", "Authorization": "Token " + token };

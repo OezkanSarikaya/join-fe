@@ -2,7 +2,7 @@
  * That function init the Variables from FireBase
  */
 async function init() {
-  await loadData("contacts");
+  // await loadData("contacts");
 }
 
 /**

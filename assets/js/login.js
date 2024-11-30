@@ -3,21 +3,29 @@
 /**
  * Login in as Guest and save session in localStorage or sessionStorage depending on remember me check
  */
-function loginGuest() {
-  let checked = document.getElementById("confirm").checked;
-  let logData = {
-    "mail": "guest@test.de",
-    "initials": "G",
-    "userName": "Guest",
+async function loginGuest() {
+  let loginData = {
+    "username": "guest@test.de",
+    "password": "123456",
   };
-  if (checked) {
-    localStorage.setItem("Join", JSON.stringify(logData));
-    sessionStorage.clear();
-  } else {
-    sessionStorage.setItem("Join", JSON.stringify(logData));
-    localStorage.clear();
-  }
-  location.href = "./summary.html?login=true";
+  let loginResult = await postData(loginData, "auth/login");
+  let initial = "";
+  
+  if (loginResult["token"]) {
+    initial = getInitials(loginResult["name"]);
+  }  
+
+  let storageData = {
+    "token": loginResult["token"],
+    "initials": initial,
+    "mail": loginResult["email"],
+    "userName": loginResult["name"],
+  };
+  
+  let credentials = 0;
+  credentials = passwordValidation(password, credentials);
+  credentials = validationEmail(email, credentials);
+  checkingIfEmailAndPasswordExist(credentials, email, password, storageData);
 }
 
 /**
