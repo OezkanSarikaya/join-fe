@@ -4,7 +4,8 @@
 // const BASE_URL = "https://join-99216-default-rtdb.europe-west1.firebasedatabase.app/";
 // const BASE_URL = "https://join-3bff9-default-rtdb.europe-west1.firebasedatabase.app/";
 
-const BASE_URL = "http://127.0.0.1:8000/api/";
+// const BASE_URL = "http://127.0.0.1:8000/api/";
+const BASE_URL = "https://join-backend.oezkan-sarikaya.de/api/";
 
 /**
  * This variable is used to now if the user is logged
